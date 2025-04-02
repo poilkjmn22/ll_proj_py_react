@@ -3,6 +3,7 @@
 from django.urls import path, include
 from rest_framework import routers
 from . import views
+from .views import HomePageView
 
 # API路由配置
 router = routers.DefaultRouter()
@@ -11,10 +12,10 @@ router.register(r'entries', views.EntryViewSet)
 
 app_name = 'learning_logs'
 urlpatterns = [
-    # 原有的页面路由
-    path('', views.index, name='index'),
-    path('topics/', views.topics, name='topics'),
-    path('topics/<int:topic_id>/', views.topic, name='topic'),
+    # path('', views.index, name='index'),
+    path('', HomePageView.as_view(), name='index'),  # 将首页指向 HomePageView
+    # path('topics/', views.topics, name='topics'),
+    # path('topics/<int:topic_id>/', views.topic, name='topic'),
     
     # API路由
     path('api/', include(router.urls)),

@@ -3,6 +3,11 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters import rest_framework as filters
+from django.views.generic import TemplateView
+from django.conf import settings
+from django.views import View
+from django.http import HttpResponse
+import os
 
 from .models import Topic, Entry
 from .serializers import TopicSerializer, EntrySerializer
@@ -57,3 +62,10 @@ class EntryViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(entries, many=True)
             return Response(serializer.data)
         return Response({'error': 'topic_id is required'}, status=400)
+
+class HomePageView(View):
+    def get(self, request):
+        # 构建 index.html 的完整路径
+        index_path = os.path.join(settings.BASE_DIR, 'learning_logs/vite-react-app/build/client/index.html')
+        with open(index_path) as f:
+            return HttpResponse(f.read())
