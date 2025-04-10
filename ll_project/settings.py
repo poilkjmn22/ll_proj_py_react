@@ -36,6 +36,7 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS = [
     # My apps.
+    'accounts',
     'learning_logs',
     'corsheaders',
 

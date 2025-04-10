@@ -131,7 +131,7 @@ export default function TopicDetail() {
                 </div>
 
                 {entries.length > 0 ? (
-                    <ul className="space-y-2">
+                    <ul className="space-y-2 list-decimal">
                         {entries.map(entry => (
                             <li key={entry.id} className="entry p-2 border-b border-gray-200 relative group">
                                 <div className="entry-text text-lg whitespace-pre-wrap">{entry.text}</div>
@@ -139,13 +139,13 @@ export default function TopicDetail() {
                                     {new Date(entry.date_added).toLocaleString()}
                                 </div>
                                 <button
-                                    className="absolute right-16 bg-yellow-500 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                                    className="absolute right-16 bottom-1 bg-yellow-500 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                                     onClick={() => handleEditEntry(entry.id)}
                                 >
                                     编辑
                                 </button>
                                 <button
-                                    className="absolute right-0 bg-red-500 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                                    className="absolute right-0 bottom-1 bg-red-500 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                                     onClick={() => handleDeleteEntry(entry.id)}
                                 >
                                     删除

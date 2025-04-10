@@ -100,18 +100,18 @@ export default function Topics() {
             {!isLoading && !error && (
                 topics.length > 0 ? (
                     <nav>
-                        <ul className="list-disc pl-5">
+                        <ul className="list-decimal pl-5">
                             {topics.map(topic => (
-                                <li key={topic.id} className="mb-2 relative group">
+                                <li key={topic.id} className="mb-2 relative group py-2">
                                     <Link to={`/topics/${topic.id}`} className="text-blue-500 hover:underline">{topic.text}</Link>
                                     <button
-                                        className="absolute right-16 bg-yellow-500 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className="absolute right-16 bottom-0 bg-yellow-500 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                                         onClick={() => handleEditTopic(topic.id)}
                                     >
                                         编辑
                                     </button>
                                     <button
-                                        className="absolute right-0 bg-red-500 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className="absolute right-0 bottom-0 bg-red-500 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                                         onClick={() => handleDeleteTopic(topic.id)}
                                     >
                                         删除

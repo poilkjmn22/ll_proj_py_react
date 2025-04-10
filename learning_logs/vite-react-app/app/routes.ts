@@ -7,6 +7,14 @@ export default [
             file: "routes/home.tsx"
         },
         {
+            path: "register",
+            file: "routes/register.tsx",
+        },
+        {
+            path: "login",
+            file: "routes/login.tsx",
+        },
+        {
             path: "topics",
             file: "routes/topics.tsx",
         },
