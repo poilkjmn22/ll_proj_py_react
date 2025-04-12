@@ -29,6 +29,10 @@ export default [
         {
             path: "newEntry/:topicId/:entryId?",
             file: "routes/newEntry.$topicId.tsx",
+        },
+        {
+            path: "*",  // 同时处理 404 和其他未匹配路径
+            file: "routes/NotFound.tsx",
         }
     ])
 ] satisfies RouteConfig;

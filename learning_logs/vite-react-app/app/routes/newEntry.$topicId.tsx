@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams, Link } from "react-router";
 import useReq from "~/utils/request";
+import { useToast } from "~/context/ToastContext";
 
 interface Topic {
     id: number;
@@ -15,6 +16,7 @@ export default function NewEntry() {
     const { topicId, entryId } = useParams();
     const req = useReq();
     const navigate = useNavigate();
+    const { showToast } = useToast();
 
     const actionText = useMemo(() => entryId ? '更新条目' : '新建条目', [entryId]);
 
@@ -64,26 +66,27 @@ export default function NewEntry() {
         e.preventDefault();
         if (selectedTopicId && entryText) {
             try {
-                const method = entryId ? 'PUT' : 'POST'; // 根据是否有 entryId 决定请求方法
+                const method = entryId ? 'PUT' : 'POST';
                 const url = entryId ? `/api/entries/${entryId}/` : `/api/entries/`;
                 const response = await req(url, {
                     method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
                     body: JSON.stringify({
                         topic: selectedTopicId,
                         text: entryText,
-                        ...(entryId ? { id: entryId } : undefined)
                     }),
                 });
+
                 if (!response.ok) {
-                    throw new Error(`提交失败: ${response.status}`);
+                    const data = await response.json();
+                    throw new Error(data.detail || data.message || '操作失败');
                 }
-                navigate(`/topics/${selectedTopicId}`); // 提交成功后跳转回主题列表
+
+                showToast(entryId ? '条目更新成功' : '条目创建成功', 'success');
+                navigate(`/topics/${selectedTopicId}`);
             } catch (err) {
-                console.error(`${actionText}失败:`, err);
-                setError(`${actionText}时出错，请稍后再试`);
+                const message = err instanceof Error ? err.message : '操作失败';
+                setError(message);
+                showToast(message, 'error');
             }
         }
     };
@@ -125,4 +128,4 @@ export default function NewEntry() {
             </form>
         </div>
     );
-} 
+}

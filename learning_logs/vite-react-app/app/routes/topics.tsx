@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import useReq from "~/utils/request";
+import ConfirmDialog from "~/components/ConfirmDialog"; // 引入 ConfirmDialog
+import { useToast } from "~/context/ToastContext";
 
 interface Topic {
     id: number;
@@ -12,8 +14,13 @@ export default function Topics() {
     const [topics, setTopics] = useState<Topic[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [confirmDialog, setConfirmDialog] = useState<{
+        isOpen: boolean;
+        topicId: number | null;
+    }>({ isOpen: false, topicId: null });
 
     const req = useReq();
+    const { showToast } = useToast();
 
     useEffect(() => {
         const fetchTopics = async () => {
@@ -55,30 +62,37 @@ export default function Topics() {
     };
 
     const handleDeleteTopic = async (topicId: number) => {
-        // 弹出确认对话框
-        const confirmDelete = window.confirm("您确定要删除这个主题吗？");
-        if (!confirmDelete) {
-            return; // 如果用户选择取消，直接返回
-        }
-
         try {
             const response = await req(`/api/topics/${topicId}/`, {
                 method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
             });
 
             if (!response.ok) {
                 throw new Error(`删除失败: ${response.status}`);
             }
 
-            // 更新主题列表
             setTopics(topics.filter(topic => topic.id !== topicId));
+            showToast('主题删除成功', 'success');
         } catch (err) {
-            console.error('删除主题失败:', err);
-            setError('删除主题时出错，请稍后再试');
+            const message = err instanceof Error ? err.message : '删除失败';
+            setError(message);
+            showToast(message, 'error');
         }
+    };
+
+    const openConfirmDialog = (topicId: number) => {
+        setConfirmDialog({ isOpen: true, topicId });
+    };
+
+    const closeConfirmDialog = () => {
+        setConfirmDialog({ isOpen: false, topicId: null });
+    };
+
+    const confirmDelete = () => {
+        if (confirmDialog.topicId !== null) {
+            handleDeleteTopic(confirmDialog.topicId);
+        }
+        closeConfirmDialog();
     };
 
     return (
@@ -112,7 +126,7 @@ export default function Topics() {
                                     </button>
                                     <button
                                         className="absolute right-0 bottom-0 bg-red-500 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                                        onClick={() => handleDeleteTopic(topic.id)}
+                                        onClick={() => openConfirmDialog(topic.id)}
                                     >
                                         删除
                                     </button>
@@ -123,6 +137,14 @@ export default function Topics() {
                 ) : (
                     <p className="text-gray-500">没有找到学习主题。</p>
                 )
+            )}
+
+            {confirmDialog.isOpen && (
+                <ConfirmDialog
+                    message="您确定要删除这个主题吗？"
+                    onConfirm={confirmDelete}
+                    onCancel={closeConfirmDialog}
+                />
             )}
         </div>
     );

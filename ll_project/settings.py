@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'accounts',
     'learning_logs',
     'corsheaders',
+    'rest_framework.authtoken',
 
     # Default django apps.
     'django.contrib.admin',

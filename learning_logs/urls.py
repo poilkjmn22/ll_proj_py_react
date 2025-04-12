@@ -3,12 +3,12 @@
 from django.urls import path, include
 from rest_framework import routers
 from . import views
-from .views import HomePageView
+from .views import HomePageView, CustomAuthToken
 
 # API路由配置
 router = routers.DefaultRouter()
-router.register(r'topics', views.TopicViewSet)
-router.register(r'entries', views.EntryViewSet)
+router.register(r'topics', views.TopicViewSet, basename='topic')
+router.register(r'entries', views.EntryViewSet, basename='entry')
 
 app_name = 'learning_logs'
 urlpatterns = [
@@ -19,4 +19,5 @@ urlpatterns = [
     
     # API路由
     path('api/', include(router.urls)),
+    path('api/accounts/login/', CustomAuthToken.as_view(), name='api_token_auth'),
 ]

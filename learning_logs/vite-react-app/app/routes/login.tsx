@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext"; // 引入 useToast
 import { useNavigate } from "react-router";
+import useReq from "~/utils/request";
 
 const Login: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const { login } = useAuth();
   const { showToast } = useToast(); // 使用 Toast 上下文
   const navigate = useNavigate();
+  const req = useReq();
 
   const handleLogin = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -18,21 +20,19 @@ const Login: React.FC = () => {
     const password = formData.get("password") as string;
 
     try {
-      const response = await fetch("http://localhost:8000/api/accounts/login/", {
+      const response = await req("/api/accounts/login/", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({ username, password }),
       });
 
+      const data = await response.json();
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || "登录失败");
+        throw new Error(data.detail || "登录失败");
       }
 
-      login({ username: username }); // 存储用户信息
-      showToast("登录成功", "success"); // 显示成功提示
+      sessionStorage.setItem('token', data.token); // 不要添加任何前缀
+      login({ username: data.username });
+      showToast("登录成功", "success");
       navigate("/");
     } catch (err: any) {
       setError(err.message);

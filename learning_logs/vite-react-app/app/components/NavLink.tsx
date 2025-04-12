@@ -7,6 +7,7 @@ export default function Navigation() {
   const username =  user.username; // 假设从后端或上下文中获取用户名
 
   const handleLogout = () => {
+    sessionStorage.removeItem('token'); // 清除 token
     logout(); // 调用注销方法
     navigate("/login"); // 导航到登录页面
   };

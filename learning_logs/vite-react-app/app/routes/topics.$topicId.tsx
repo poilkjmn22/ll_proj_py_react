@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router";
 import useReq from "~/utils/request";
+import ConfirmDialog from "~/components/ConfirmDialog"; // 引入 ConfirmDialog
 
 interface Topic {
     id: number;
@@ -22,6 +23,10 @@ export default function TopicDetail() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
+    const [confirmDialog, setConfirmDialog] = useState<{
+        isOpen: boolean;
+        entryId: number | null;
+    }>({ isOpen: false, entryId: null });
 
     const req = useReq();
 
@@ -37,6 +42,10 @@ export default function TopicDetail() {
                         'Content-Type': 'application/json',
                     },
                 });
+                if (topicResponse.status === 404 || topicResponse.status === 403) {
+                    navigate('/404');
+                    return;
+                }
                 if (!topicResponse.ok) {
                     throw new Error(`获取主题详情失败: ${topicResponse.status}`);
                 }
@@ -71,12 +80,6 @@ export default function TopicDetail() {
     }, [topicId]);
 
     const handleDeleteEntry = async (entryId: number) => {
-        // 弹出确认对话框
-        const confirmDelete = window.confirm("您确定要删除这个条目吗？");
-        if (!confirmDelete) {
-            return; // 如果用户选择取消，直接返回
-        }
-
         try {
             const response = await req(`/api/entries/${entryId}/`, {
                 method: 'DELETE',
@@ -95,6 +98,20 @@ export default function TopicDetail() {
             console.error('删除条目失败:', err);
             setError('删除条目时出错，请稍后再试');
         }
+    };
+    const openConfirmDialog = (entryId: number) => {
+        setConfirmDialog({ isOpen: true, entryId });
+    };
+
+    const closeConfirmDialog = () => {
+        setConfirmDialog({ isOpen: false, entryId: null });
+    };
+
+    const confirmDelete = () => {
+        if (confirmDialog.entryId !== null) {
+            handleDeleteEntry(confirmDialog.entryId);
+        }
+        closeConfirmDialog();
     };
 
     const handleEditEntry = (entryId: number) => {
@@ -146,7 +163,7 @@ export default function TopicDetail() {
                                 </button>
                                 <button
                                     className="absolute right-0 bottom-1 bg-red-500 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                                    onClick={() => handleDeleteEntry(entry.id)}
+                                    onClick={() => openConfirmDialog(entry.id)}
                                 >
                                     删除
                                 </button>
@@ -161,6 +178,13 @@ export default function TopicDetail() {
             <div className="actions mt-4">
                 <Link to="/topics" className="text-blue-500 hover:underline">返回主题列表</Link>
             </div>
+            {confirmDialog.isOpen && (
+                <ConfirmDialog
+                    message="您确定要删除这个条目吗？"
+                    onConfirm={confirmDelete}
+                    onCancel={closeConfirmDialog}
+                />
+            )}
         </div>
     );
-} 
+}
