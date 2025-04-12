@@ -23,13 +23,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-mibxt7sboxg%r)9t6z=a6@weyo(thgbknfcwgyowgx9$5s4&=!'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# 更新 DEBUG 设置
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     'll-proj-py-react.onrender.com',
+    '.onrender.com',  # 允许所有 render 子域名
 ]
 
 # Application definition
@@ -66,6 +67,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "https://learninglogsfrontend.vercel.app",  # 添加 Vercel 部署的前端地址
 ]
 
 # 添加这些额外的CORS设置
@@ -96,6 +98,7 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:5173',  # 添加您的前端应用程序的 URL
     "http://127.0.0.1:5173",
+    "https://learninglogsfrontend.vercel.app",
 ]
 
 ROOT_URLCONF = 'll_project.urls'
@@ -164,13 +167,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # 选择一个合适的目录
+# 删除 STATICFILES_DIRS 配置，因为不需要服务前端文件
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'learning_logs/vite-react-app/build/client'),
-]
+# 添加 whitenoise 配置
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/dev/ref/settings/#default-auto-field

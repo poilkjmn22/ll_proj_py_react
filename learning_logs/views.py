@@ -7,7 +7,7 @@ from django_filters import rest_framework as filters
 from django.views.generic import TemplateView
 from django.conf import settings
 from django.views import View
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework.exceptions import PermissionDenied, NotFound
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate
@@ -113,11 +113,12 @@ class EntryViewSet(viewsets.ModelViewSet):
         return Response({'error': 'topic_id is required'}, status=400)
 
 class HomePageView(View):
-    def get(self, request):
-        # 构建 index.html 的完整路径
-        index_path = os.path.join(settings.BASE_DIR, 'learning_logs/vite-react-app/build/client/index.html')
-        with open(index_path) as f:
-            return HttpResponse(f.read())
+    def get(self, request, *args, **kwargs):
+        return JsonResponse({
+            "status": "ok",
+            "message": "Learning Logs API is running",
+            "frontend_url": "https://learninglogsfrontend.vercel.app"
+        })
 
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
