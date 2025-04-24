@@ -115,7 +115,7 @@ class EntryViewSet(viewsets.ModelViewSet):
 class HomePageView(View):
     def get(self, request):
         # 构建 index.html 的完整路径
-        index_path = os.path.join(settings.BASE_DIR, 'learning_logs/vite-react-app/build/client/index.html')
+        index_path = os.path.join(settings.BASE_DIR, '../build/client/index.html')
         with open(index_path) as f:
             return HttpResponse(f.read())
 

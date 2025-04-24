@@ -36,3 +36,5 @@ staticfiles/
 *.sw?
 
 .vercel
+
+deploy.config.*

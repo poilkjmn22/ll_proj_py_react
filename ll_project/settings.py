@@ -29,7 +29,8 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    'll-proj-py-react.onrender.com',
+    # 'll-proj-py-react.onrender.com',
+    '113.45.73.223'
 ]
 
 # Application definition
@@ -66,6 +67,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    'http://113.45.73.223:8000'
 ]
 
 # 添加这些额外的CORS设置
@@ -96,6 +98,7 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:5173',  # 添加您的前端应用程序的 URL
     "http://127.0.0.1:5173",
+    'http://113.45.73.223:8000'
 ]
 
 ROOT_URLCONF = 'll_project.urls'
@@ -164,12 +167,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # 选择一个合适的目录
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'learning_logs/vite-react-app/build/client'),
+    os.path.join(BASE_DIR, '../build/client'),  # 指向相对于后端项目根目录的 ../build/client/
 ]
 
 # Default primary key field type
